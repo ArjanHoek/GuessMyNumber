@@ -2,10 +2,12 @@
 
 // Generate number to guess by player
 let secretNumber;
+let max;
 
 // Create function to reset secret number
-const generateNewSecretNumber = (max = 20) => {
-  secretNumber = Math.trunc(Math.random() * max) + 1;
+const generateNewSecretNumber = (maximum = 20) => {
+  max = maximum;
+  secretNumber = Math.trunc(Math.random() * maximum) + 1;
   console.log(secretNumber);
 };
 
@@ -37,8 +39,7 @@ const displayHighscore = () => {
 
 // Create function to adjust message
 const updateMessage = msg => {
-  const messageEl = document.querySelector('.message');
-  messageEl.textContent = msg;
+  document.querySelector('.message').textContent = msg;
 };
 
 // Create function to reset input
@@ -69,21 +70,17 @@ const handleWinner = () => {
 
 // Add click event listener to check button
 document.querySelector('.check').addEventListener('click', function () {
-  const inputEl = document.querySelector('.guess');
-  const inputValue = Number(inputEl.value);
+  const inputValue = Number(document.querySelector('.guess').value);
 
   if (!inputValue) {
     updateMessage('No number!');
+  } else if (inputValue < 0 || inputValue > max) {
+    updateMessage('Invalid number!');
   } else if (inputValue === secretNumber) {
     handleWinner();
   } else if (score > 1) {
-    if (inputValue > secretNumber) {
-      updateMessage('Too High!');
-      setScore(score - 1);
-    } else if (inputValue < secretNumber) {
-      updateMessage('Too Low!');
-      setScore(score - 1);
-    }
+    updateMessage(inputValue > secretNumber ? 'Too High!' : 'Too Low!');
+    setScore(score - 1);
   } else {
     updateMessage('You lost the game!');
     setScore(score - 1);
@@ -96,7 +93,7 @@ document.querySelector('.check').addEventListener('click', function () {
 const initializeGame = (resetHighscore = false) => {
   updateHighscore();
   setScore(20);
-  generateNewSecretNumber();
+  generateNewSecretNumber(30);
   updateMessage('Start guessing...');
   setBackgroundColor('#222');
   adjustSecretNumberDisplay('?', 15);
